@@ -40,4 +40,6 @@ class inspircd::params {
   $keyfile        = undef
   $ldapauth       = undef
   $use_backport   = false
+  $from_src       = false
+  $inspircd_v     = '2.0.14'
 }
