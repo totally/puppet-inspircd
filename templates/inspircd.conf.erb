@@ -102,13 +102,10 @@
           verbose="yes">
 <% end -%>
 
-<files motd="/etc/inspircd/inspircd.motd"
-       rules="/etc/inspircd/inspircd.rules">
-
 <channels users="20"
           opers="60">
 
-<pid file="/var/run/inspircd.pid">
+<pid file="<%= scope.lookupvar('inspircd::config::pid') %>">
 
 <options prefixquit="Quit: "
          noservices="no"
