@@ -32,15 +32,21 @@ class inspircd::config (
   $certfile    = hiera('certfile', $inspircd::params::certfile),
   $keyfile     = hiera('keyfile', $inspircd::params::keyfile),
   $ldapauth    = hiera('ldapauth', $inspircd::params::ldapauth),
+  $from_src    = hiera('from_src', $inspircd::params::from_src),
 ) inherits inspircd::params {
-  file { '/etc/inspircd/inspircd.conf':
+  case $from_src {
+    true    : { $config = '/opt/inspircd/conf/inspircd.conf' }
+    default : { $config = '/etc/inspircd/inspircd.conf' }
+  }
+
+  file { $config:
     ensure  => $ensure,
     owner   => 'irc',
     group   => 'irc',
     mode    => '0400',
     content => template('inspircd/inspircd.conf.erb'),
-    require => Package['inspircd'],
-    notify  => Class['inspircd::service'],
+    require => Class['inspircd::package'],
+    notify  => Service['inspircd'],
   }
 
   file { '/etc/default/inspircd':
@@ -49,7 +55,16 @@ class inspircd::config (
     group   => 'irc',
     mode    => '0400',
     source  => 'puppet:///modules/inspircd/default',
-    require => Package['inspircd'],
-    notify  => Class['inspircd::service'],
+    require => Class['inspircd::package'],
+    notify  => Service['inspircd'],
+  }
+
+  if $from_src {
+    # Generate certs if necessary
+    gnutls::generate_key{'inspircd':
+      certfile    => $certfile,
+      keyfile     => $keyfile,
+      user        => 'irc',
+    }
   }
 }
