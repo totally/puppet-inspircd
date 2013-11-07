@@ -35,10 +35,16 @@ class inspircd::config (
   $from_src    = hiera('from_src', $inspircd::params::from_src),
 ) inherits inspircd::params {
   case $from_src {
-    true    : { $config = '/opt/inspircd/conf/inspircd.conf' }
-    default : { $config = '/etc/inspircd/inspircd.conf' }
+    true    : { 
+      $config = '/opt/inspircd/conf/inspircd.conf' 
+      $pid    = '/opt/inspircd/inspircd.pid'
+    }
+    default : { 
+      $config = '/etc/inspircd/inspircd.conf' 
+      $pid    = '/var/run/inspircd.pid'
+    }
   }
-
+ 
   file { $config:
     ensure  => $ensure,
     owner   => 'irc',
@@ -65,6 +71,7 @@ class inspircd::config (
       certfile    => $certfile,
       keyfile     => $keyfile,
       user        => 'irc',
+      require     => Class['inspircd::package'],
     }
   }
 }
