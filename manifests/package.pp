@@ -34,6 +34,8 @@ class inspircd::package (
   if $from_src {
     # build_essential needed to compile source
     include build_essential
+    # libldap2-dev is needed so ldap module compiles
+    include openldap::libldap
     include inspircd::user
   
     # irc user is required for make install
@@ -54,12 +56,17 @@ class inspircd::package (
       cwd         => "/root",
       logoutput   => true,
     } -> 
+    # Add link for ldapauth module (modules in modules/extra are not automatically compiled)
+    file {"/root/inspircd-2.0.14/src/modules/m_ldapauth.cpp":
+      ensure    => link,
+      target    => "/root/inspircd-${inspircd_v}/src/modules/extra/m_ldapauth.cpp",
+    } ->
     exec {"configure inspircd":
       command     => "perl configure --enable-gnutls --disable-interactive --prefix=/opt/inspircd --uid 39",
       cwd         => "/root/inspircd-${inspircd_v}/",
       unless      => "test -f GNUmakefile",
       logoutput   => true,
-      require     => Class['inspircd::user'],
+      require     => [Class['inspircd::user'], Class['openldap::libldap']],
     } -> 
     exec {"make inspircd":
       command     => "make",
