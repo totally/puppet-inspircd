@@ -7,10 +7,13 @@
        email="<%= scope.lookupvar('inspircd::config::adminemail') %>">
 
 <% if not @sslonly -%>
- <%- ips.each do |ip| -%>
+ <%- @ips.each do |ip| -%>
 <bind address="<%= ip %>" port="6667" type="clients">
  <%- end -%>
 <% end -%>
+
+
+<power diepass="3456" restartpass="7890" pause="2">
 
 <% if scope.lookupvar('inspircd::config::ssl') != "" -%>
 
@@ -26,7 +29,7 @@
         keyfile="<%= scope.lookupvar('inspircd::config::keyfile') %>">
 <% end -%>
 
-<% ips.each do |ip| -%>
+<% @ips.each do |ip| -%>
 <bind address="<%= ip %>" port="6697" type="clients" ssl="<%= scope.lookupvar('inspircd::config::ssl') %>">
 <% end -%>
 
@@ -71,7 +74,7 @@
 <module name="m_sha256.so">
 <module name="m_ripemd160.so">
 
-<% opers.each do |oper| -%>
+<% @opers.each do |oper| -%>
 <oper name="<%= oper[0] %>"
       password="<%= oper[1]['password'] %>"
   <%- if oper[1]['hash'] -%>
@@ -81,22 +84,22 @@
       type="<%= oper[1]['type'] %>">
 <% end -%>
 
-<% if ldapauth != "" -%>
+<% if @ldapauth != "" -%>
 <module name="m_ldapauth.so">
 <ldapauth baserdn="<%= ldapauth['baserdn'] %>"
-  <%- if ldapauth['attribute'] -%>
+  <%- if @ldapauth['attribute'] -%>
           attribute="<%= ldapauth['attribute'] %>"
   <%- else -%>
           attribute="uid"
   <%- end -%>
           server="<%= ldapauth['server'] %>"
           killreason="Access denied"
-  <%- if ldapauth['searchscope'] -%>
+  <%- if @ldapauth['searchscope'] -%>
           searchscope="<%= ldapauth['searchscope'] %>"
   <%- end -%>
           binddn="<%= ldapauth['binddn'] %>"
           bindauth="<%= ldapauth['bindauth'] %>"
-  <%- if ldapauth['useusername'] -%>
+  <%- if @ldapauth['useusername'] -%>
           userfield="yes"
   <%- end -%>
           verbose="yes">
