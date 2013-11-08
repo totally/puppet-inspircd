@@ -33,7 +33,11 @@ class inspircd::package (
 
   if $from_src {
     # build_essential needed to compile source
-    include build_essential
+    if (!defined(Package['build-essential'])){
+        package{'build-essential':
+            ensure  => installed,
+        }
+    }
     # libldap2-dev is needed so ldap module compiles
     include openldap::libldap
     include inspircd::user
@@ -42,7 +46,7 @@ class inspircd::package (
     # Required by ./configure for ascertaining whether GNUTLS is installed
     package {'pkg-config':
       ensure  => installed,
-      require => Class['build_essential'],
+      require => Package['build-essential'],
     } ->
     exec {"get inspircd tarball":
       command     => "wget -O inspircdv${inspircd_v}.tar.gz https://github.com/inspircd/inspircd/archive/v${inspircd_v}.tar.gz",
