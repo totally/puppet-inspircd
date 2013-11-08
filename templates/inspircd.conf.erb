@@ -6,7 +6,7 @@
        nick="<%= scope.lookupvar('inspircd::config::adminnick') %>"
        email="<%= scope.lookupvar('inspircd::config::adminemail') %>">
 
-<% if not sslonly -%>
+<% if not @sslonly -%>
  <%- ips.each do |ip| -%>
 <bind address="<%= ip %>" port="6667" type="clients">
  <%- end -%>
