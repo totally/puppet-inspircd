@@ -78,7 +78,7 @@ class inspircd::package (
       unless      => "test -f build/bin/inspircd",
       logoutput   => true,
       # This can take a LONG time
-      timeout     => 600,
+      timeout     => 900,
     } ->  
     exec {"make install inspircd":
       command     => "make install",

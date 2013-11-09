@@ -21,6 +21,7 @@ class inspircd::service (
   service { 'inspircd':
     ensure     => $ensure_running,
     enable     => $ensure_enable,
+    start      => '/etc/init.d/inspircd start',
     hasrestart => true,
     restart    => "kill -HUP `cat ${inspircd::config::pid}`",
     hasstatus  => true,
