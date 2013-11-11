@@ -24,10 +24,12 @@ class inspircd::package (
     file { '/etc/apt/preferences.d/inspircd.pref':
       ensure  => $ensure,
       content => template('inspircd/etc/apt/preferences.d/inspircd.pref.erb'),
+      notify  => Exec['apt_update'],
     }
   } else {
     file { '/etc/apt/preferences.d/inspircd.pref':
       ensure  => absent,
+      notify  => Exec['apt_update'],
     }
   }
 
